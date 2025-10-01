@@ -1,6 +1,6 @@
 ## 📚 Homeworks
 
-- [Homework 1](Homework 1/) – Logistic regression with gradient descent  
+- [Homework 1](Homework1/) – Logistic regression with gradient descent  
 - Homework 2 – (to be added)  
 - Homework 3 – (to be added)  
 
