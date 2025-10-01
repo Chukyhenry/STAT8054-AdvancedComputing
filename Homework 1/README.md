@@ -13,9 +13,7 @@ This assignment implements gradient descent to minimize the negative log-likelih
 ## Experiment
  Data: simulated logistic regression with `n = 100` and `p = 20` predictors  
  Step size:  
-  \[
-  \alpha = \frac{n \cdot a}{\varphi_{\max}(X^\top X)}, \quad a = 8,7,\dots,1
-  \]
+  $\alpha = \frac{n \cdot a}{\varphi_{\max}(X^\top X)}, \quad a = 8,7,\dots,1$
 
 ## Results
  **Small step sizes** (`a = 1, 2, 3`): slower convergence, more iterations needed  
