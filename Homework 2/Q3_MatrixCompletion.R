@@ -67,4 +67,29 @@ matrix_completion_path <- function(Y, nlambda, lambda_ratio, max_iter = 20000, t
   list(Theta.list = Theta_list, lambda.vec = lambda_vec)
 }
 
-matrix_completion_C
+matrix_completion_CV <- function(Y, Omega, lambda_vec, nfolds, observed_indices, max_iter = 20000, tol = 1e-8, initial_step) {
+  cl <- makeCluster(detectCores() - 1); registerDoParallel(cl)
+  nlambda <- length(lambda_vec); fold_id <- sample(rep(1:nfolds, length.out = sum(Omega)))
+
+  cv_errors <- foreach(fold = 1:nfolds, .combine='+', .packages=c("Matrix")) %dopar% {
+    val_idx <- observed_indices[fold_id == fold, , drop=FALSE]
+    train_Omega <- Omega; train_Omega[val_idx] <- FALSE
+    Y_train_obs <- Y; Y_train_obs[!train_Omega] <- 0
+    Theta_prev <- matrix(0, nrow(Y), ncol(Y)); fold_errors <- numeric(nlambda)
+    for (i in 1:nlambda) {
+      Theta <- prox_grad_descent_single_lambda(Y_train_obs, train_Omega, lambda_vec[i], max_iter, tol, Theta_prev, initial_step)
+      fold_errors[i] <- sum((Y[val_idx] - Theta[val_idx])^2)
+      Theta_prev <- Theta
+    }
+    fold_errors
+  }
+
+  stopCluster(cl)
+  avg_cv_error <- cv_errors / sum(Omega)
+  best_idx <- which.min(avg_cv_error)
+  best_lambda <- lambda_vec[best_idx]
+  Y_obs <- Y; Y_obs[!Omega] <- 0
+  Theta_star <- prox_grad_descent_single_lambda(Y_obs, Omega, best_lambda, max_iter, tol, NULL, initial_step)
+
+  list(cv_errors = cv_errors, lambda_vec = lambda_vec, best.lambda = best_lambda, Theta.best = Theta_star)
+}
