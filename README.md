@@ -1,7 +1,7 @@
 ## 📚 Homeworks
 
 - [Homework 1](Homework1/) – Logistic regression with gradient descent  
-- [Homework 2](Homework2/) – (to be added)  
+- [Homework 2](Homework2/) – EM Algorithm for Mixed-Type Data, Bradley-Terry Model for NBA Rankings, and Matrix Completion with Nuclear Norm Penalty  
 - Homework 3 – (to be added)  
 
 ---
