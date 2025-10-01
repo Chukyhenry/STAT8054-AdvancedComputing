@@ -64,29 +64,53 @@ X <- matrix(rnorm(n * p), n, p)
 beta <- matrix(rnorm(p * K), p, K)
 xb <- crossprod(t(X), beta)
 probs <- exp(xb) / rowSums(exp(xb))
-y <- sapply(1:n, function(j) sample(1:K, 1, prob = probs[j, ]))
+y <- rep(0, n)
+for (jj in 1:n) y[jj] <- sample(1:K, 1, prob = probs[jj, ])
 
+# Parameters
 max_iter <- 1000; tol <- 1e-4; gamma <- 0.1; step_size <- 0.01
 batch_sizes <- c(1, 10, 50, 100)
-results <- list()
 
+results <- list()
 for (bs in batch_sizes) {
-  results[[paste0("MBSGD_", bs)]] <- MBSGD_MultinomLogisticReg(X, y, bs, max_iter, tol, gamma, step_size)
+  cat("Running MBSGD with batch size:", bs, "\n")
+  out <- MBSGD_MultinomLogisticReg(X, y, batch_size = bs, max_iter = max_iter,
+                                   tol = tol, gamma = gamma, step_size = step_size)
+  results[[paste0("MBSGD_", bs)]] <- out
 }
 
-results[["SAG"]] <- SAG_MultinomLogisticReg(X, y, max_iter, tol, step_size)
+cat("Running SAG...\n")
+out_sag <- SAG_MultinomLogisticReg(X, y, max_iter = max_iter,
+                                   tol = tol, step_size = step_size)
+results[["SAG"]] <- out_sag
 
-# Plot Objective vs Iteration
+# Prepare data for plotting
 plot_data <- data.frame()
 for (bs in batch_sizes) {
   out <- results[[paste0("MBSGD_", bs)]]
-  df <- data.frame(Iteration = 1:length(out$obj), Objective = out$obj,
-                   Time = cumsum(out$time), Algorithm = paste0("MBSGD (batch=", bs, ")"))
+  df <- data.frame(
+    Iteration = 1:length(out$obj),
+    Objective = out$obj,
+    Time = cumsum(out$time),
+    Algorithm = paste0("MBSGD (batch=", bs, ")")
+  )
   plot_data <- rbind(plot_data, df)
 }
-df_sag <- data.frame(Iteration = 1:length(results[["SAG"]]$obj), Objective = results[["SAG"]]$obj,
-                     Time = cumsum(results[["SAG"]]$time), Algorithm = "SAG")
+df_sag <- data.frame(
+  Iteration = 1:length(out_sag$obj),
+  Objective = out_sag$obj,
+  Time = cumsum(out_sag$time),
+  Algorithm = "SAG"
+)
 plot_data <- rbind(plot_data, df_sag)
 
-ggplot(plot_data, aes(x = Iteration, y = Objective, color = Algorithm)) + geom_line() +
-  labs(title = "Objective Function Convergence", x = "Iteration", y = "Negative Log-Likelihood")
+# Save plots
+ggplot(plot_data, aes(x = Iteration, y = Objective, color = Algorithm)) +
+  geom_line() +
+  labs(title = "Objective Function Convergence", x = "Iteration", y = "Negative Log-Likelihood") +
+  ggsave("figures/Q2_obj_iter.png", width = 8, height = 6)
+
+ggplot(plot_data, aes(x = Time, y = Objective, color = Algorithm)) +
+  geom_line() +
+  labs(title = "Objective vs. Elapsed Time", x = "Time (seconds)", y = "Negative Log-Likelihood") +
+  ggsave("figures/Q2_obj_time.png", width = 8, height = 6)
