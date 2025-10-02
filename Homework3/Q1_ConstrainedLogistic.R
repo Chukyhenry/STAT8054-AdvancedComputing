@@ -69,7 +69,7 @@ alpha <- 4/(max(eigen(crossprod(X))$values))
 out <- LinCon_LogisticReg(X, y, A, b, alpha, max_iter, tol)
 
 # Save plot
-png("figures/Q1_obj_convergence.png", width = 800, height = 600)
+png("Homework3/figures/Q1_obj_convergence.png", width = 800, height = 600)
 plot(out$objective_values, type = "l",
      main = "Objective Function Convergence",
      xlab = "Iteration", ylab = "Objective Function Value")
