@@ -4,7 +4,7 @@
 
 1. **Constrained Logistic Regression** – `Q1_ConstrainedLogistic.R`  
    Implements an **accelerated projected gradient descent** algorithm to solve  
-   $$ \min_\beta \frac{1}{n} \sum_{i=1}^n \left[ \log(1 + e^{x_i^\top \beta}) - y_i (x_i^\top \beta) \right], \quad \text{s.t. } A \beta = b $$  
+   $$\min_\beta \frac{1}{n} \sum_{i=1}^n \left[ \log(1 + e^{x_i^\top \beta}) - y_i (x_i^\top \beta) \right], \quad \text{s.t. } A \beta = b$$  
    Each script contains:
    - Function `LinCon_LogisticReg`
    - Example simulation
