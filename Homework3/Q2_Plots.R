@@ -33,8 +33,8 @@ plot_results <- function(results, batch_sizes, save_figures = TRUE) {
     labs(title = "Objective vs. Elapsed Time", x = "Time (seconds)", y = "Negative Log-Likelihood")
   
   if (save_figures) {
-    ggsave("figures/Q2_obj_iter.png", plot = p1, width = 8, height = 6)
-    ggsave("figures/Q2_obj_time.png", plot = p2, width = 8, height = 6)
+    ggsave("Homework3/figures/Q2_obj_iter.png", plot = p1, width = 8, height = 6)
+    ggsave("Homework3/figures/Q2_obj_time.png", plot = p2, width = 8, height = 6)
   }
   
   list(plot_iteration = p1, plot_time = p2)
