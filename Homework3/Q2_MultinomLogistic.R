@@ -91,11 +91,14 @@ for (bs in batch_sizes) {
   df <- data.frame(
     Iteration = 1:length(out$obj),
     Objective = out$obj,
-    Time = cumsum(out$time),
+    Time = cumsum(out$time), 
     Algorithm = paste0("MBSGD (batch=", bs, ")")
   )
   plot_data <- rbind(plot_data, df)
 }
+
+# Add SAG results
+out_sag <- SAG_MultinomLogisticReg(X, y, max_iter = max_iter, tol = tol, step_size = step_size)
 df_sag <- data.frame(
   Iteration = 1:length(out_sag$obj),
   Objective = out_sag$obj,
@@ -103,6 +106,7 @@ df_sag <- data.frame(
   Algorithm = "SAG"
 )
 plot_data <- rbind(plot_data, df_sag)
+
 
 # Save plots
 ggplot(plot_data, aes(x = Iteration, y = Objective, color = Algorithm)) +
